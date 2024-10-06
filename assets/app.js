@@ -7,4 +7,24 @@ import './bootstrap.js';
  */
 import './styles/app.css';
 
-console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');
+//console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');
+
+var previousOpened = null
+$('.matiere').on('click', function(event) {
+    let clickedMatiere = $(this).data('matiere')
+    $('#'+clickedMatiere).slideToggle()
+    if (previousOpened && clickedMatiere != previousOpened) {
+        $('#'+previousOpened).slideUp()
+
+    }
+    event.stopPropagation()
+    previousOpened = clickedMatiere;
+   
+    
+    
+    /*if (clickedMatiere != previousOpenedNoteDetail) {
+        $('#'+previousOpenedNoteDetail).slideToggle()
+    }
+    previousOpenedNoteDetail = clickedMatiere
+    console.log(previousOpenedNoteDetail)*/
+})
