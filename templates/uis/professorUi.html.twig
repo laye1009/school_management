@@ -1,0 +1,101 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="text-center mt-3">
+    <select id="classeSelect" class="w-1/6 border border-dark p-2 select2">
+        {% for classe in classes %}
+            <option value="{{classe.id}}">{{classe.libelle}}</option>
+        {% endfor %}
+    </select>
+
+    <div class="flex justify-center h-screen">
+        <table id="schoolDatatable" class="table display striped mt-5">
+            <thead>
+                <tr>
+                    <th class="font-serif bg bg-gray-500">
+                        Nom
+                    </th>
+                    <th class="font-serif bg bg-gray-500">
+                        Prénom
+                    </th>
+                    <th class="font-serif bg bg-gray-500">
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+
+<div class="modal fade" id="schoolModal" tabindex="-1" aria-labelledby="schoolModalLabel">
+    <input type="text" id="controleVal" style="display:none;"/>
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title font-serif" id="schoolModalLabel">Gestion des notes de: <span id="displayedStudent"></span></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <p id="controleSelect" class="mb-2" style="display:none;">
+                <select id="controleTypes" class="w-100 border border-dark p-2 selectElement select2">
+                    <option value="c1">Controle 1</option>
+                    <option value="c2">Controle 2</option>
+                    <option value="final">Final</option>
+                </select>
+            </p>
+
+            <input type="number" id="newNote" name="newNote" min="0" class="p-5 border border-black"/>
+            <textarea id="appreciation" name="appreciation" rows="2" cols="23" placeholder="Apprécitations" class="mt-2 p-5 border border-black"></textarea>
+            <input type="hidden" id="matiere" value="{{prof.matiereEnseigne.id}}"/>
+        </div>
+        <div class="modal-footer mt-4">
+            <button type="button" data-matiere={{prof.matiereEnseigne.id}} id="confirmNoteEdition" class="bg-blue-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded dismissModal" data-bs-dismiss="modal">
+                OK
+            </button>
+            <button type="button" id="annulerNote" class="bg-blue-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded dismissModal" data-bs-dismiss="modal">
+                Annuler
+            </button>
+        </div>
+        </div>
+    </div>
+    </div>
+</div>
+
+<div class="modal fade" id="profStudentNotes" tabindex="-1" aria-labelledby="profStudentNotesLabel">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4 modal-header">
+                <h5 class="modal-title font-serif" id="profStudentNotesLabel">
+                    Les notes de <span class="italic" id="displayedStudent2"></span> 
+                </h5>
+                <button type="button" class="btn-close text-red-500 text-lg dismissModal" data-bs-dismiss="modal" aria-label="Close">
+                    X
+                </button>
+            </div>
+            <div class="modal-body">
+                    <table id="profStudentNotesModalBody" data-matiere={{prof.matiereEnseigne.libelle}}>
+                        <thead>
+                            <tr>
+                                <th>Matière</th>
+                                <th>Contrôle</th>
+                                <th>Note</th>
+                                <th>Appréciation</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+
+                    </table>
+            </div>
+            <div class="modal-footer mt-4">
+                <button type="button" id="ajoutNote" class="bg-blue-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded dismissModal" data-bs-dismiss="modal">
+                    <i class="fas fa-plus" title="ajouter une note"></i>
+                </button>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
