@@ -25,6 +25,7 @@ class Classe
     private Collection $matieres;
 
     #[ORM\ManyToOne(inversedBy: 'classeEnseigne')]
+    #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
     private ?Professor $professor = null;
 
     /**

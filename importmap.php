@@ -24,5 +24,11 @@ return [
     ],
     '@hotwired/turbo' => [
         'version' => '7.3.0',
-    ]
+    ],
+    /*'pdfmake' => [
+        'path' => 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/pdfmake.min.js',
+    ],
+    'pdfFonts' => [
+        'path' => './node_modules/pdfmake/build/vfs_fonts.js',
+    ],*/
 ];

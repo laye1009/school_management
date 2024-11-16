@@ -77,6 +77,9 @@ table tr th {
 .modal-content {
     width: 30vw;
 }
+#reports {
+    width: 50vw;
+}
 /*.modal-body table {
     width:100%;
 }*/
@@ -86,4 +89,46 @@ table tr th {
 .selectElement {
     width: 14.5vw;
     /*margin-left: 4vw;*/
+}
+
+/* Accordeon admin*/
+.accordion {
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+.accordion-header {
+    background-color: #f1f1f1;
+    cursor: pointer;
+    padding: 10px;
+    font-weight: bold;
+}
+.accordion-content {
+    display: none; /* Contenu masqué par défaut */
+    padding: 10px;
+    border-top: 1px solid #ccc;
+}
+header {
+    display: block;
+    height: 10vh;
+    
+}
+
+header p embed{
+    position: relative;
+    top:0;
+    height : 10vh;
+    background-color: "red";
+}
+
+header p embed svg{
+    height: 10vh;
+}
+
+.dt-button {
+    display: inline-block !important;
+}
+
+#deleteMessage {
+    display: none;
 }

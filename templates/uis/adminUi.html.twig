@@ -1,0 +1,267 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<div class="flex justify-center w-screen mt-3">
+    <div class="w-1/2">
+        {% for label, messages in app.flashes %}
+            <div class="bg-{{ label }}-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md" role="alert">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        <div class="accordion">
+            <div class="accordion-header flex justify-center">
+                <h4>Gestions des élèves</h4>
+            </div>
+            <div class="accordion-content flex justify-center">
+                <table id="adminGestionEleve" class="table display striped mt-5">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Prenom</th>
+                            <th>Classe</th>
+                            <th>Actions</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for eleve in students %}
+                            <tr>
+                                <td>{{eleve.nom}}</td>
+                                <td>{{eleve.prenom}}</td>
+                                <td>{{eleve.classe.libelle}}</td>
+                                <td>
+                                    <span>
+                                        <i class="fas fa-pencil" id="adminStudents" 
+                                        data-studentid={{eleve.id}}>
+                                        </i>
+                                    </span>
+                                    <span>
+                                        <i class="fas fa-eye" id="adminStudentsReports" title="Voir le bulletin" data-turbo="false"
+                                        data-studentid={{eleve.id}}>
+                                        </i>
+                                    </span>
+                                </td>
+                            </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="accordion">
+            <div class="accordion-header flex justify-center">
+                <h4>Gestion des professeurs</h4>
+            </div>
+            <div class="accordion-content">
+                <div id="deleteMessage" class="bg bg-green-100 items-center p-1 rounded">
+                    
+                </div>
+                <table id="adminGestionProfs" class="table display striped mt-5">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Prenom</th>
+                            <th>Matière</th>
+                            <th>Classes</th>
+                            <th>Actions</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for prof in profs %}
+                            {% set profClasses = "" %}
+                            {%for classe in prof.classes%}
+                                {% set profClasses = profClasses ~ classe.libelle ~ ";" %}
+                            {% endfor %}
+                            <tr>
+                                <td>{{prof.nom}}</td>
+                                <td>{{prof.prenom}}</td>
+                                <td>{{prof.matiereEnseigne.libelle}}</td>
+                                <td>{{profClasses}}</td>
+                                <td>
+                                    <span>
+                                        <i class="fas fa-pencil" id="adminProfs" 
+                                        data-profid={{prof.id}}>
+                                        </i>
+                                    </span>
+                                    <span>
+                                        {% set theId = 'prof' ~ prof.id %}
+                                        <i class="fas fa-trash text-red-500 cAdminProfDel" id={{theId}}
+                                        data-profid={{prof.id}}>
+                                        </i>
+                                    </span>
+                                </td>
+                            </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="modal fade" id="adminConfirmProfDel" tabindex="-1" aria-labelledby="adminConfirmProfDelLabel">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="flex justify-between items-center mb-4 modal-header">
+                        <h5 class="modal-title font-serif" id="adminConfirmProfDelLabel">Confirmer la suppression</h5>
+                        <button type="button" class="btn-close text-red-500 text-lg dismissModal" data-bs-dismiss="modal" aria-label="Close">
+                            X
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="bg bg-gray-100 p-2">
+                            <p>Confirmez-vous la suppression?</p>
+                            
+                        </div>
+                        <button id="confirmProfDel" class="bg bg-red-500 p-2 rounded">Oui</button>
+                    </div>
+                    <div class="modal-footer mt-4">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="accordion">
+            <div class="accordion-header flex justify-center">
+                <h4>Nouvelle Arrivée</h4>
+            </div>
+            <div class="accordion-content flex justify-center">
+                <a type="button" class="bg-blue-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-2 mr-2" href="{{path('new_professor')}}">Professeur</a>
+                <a type="button" class="bg-blue-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-2" href="{{path('new_student')}}">Elève</a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal fade" id="adminStudentList" tabindex="-1" aria-labelledby="adminStudentListLabel">
+        <input type="text" id="controleVal" style="display:none;"/>
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="flex justify-between items-center mb-4 modal-header">
+                <h5 class="modal-title font-serif" id="adminStudentListLabel">Editer : <span id="adminSelectedStudent"></span></h5>
+                <button type="button" class="btn-close text-red-500 text-lg dismissModal" data-bs-dismiss="modal" aria-label="Close">
+                    X
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{path('admin_edit_student')}}" method="POST">
+                    <p class="mb-2">
+                        <input type="text" id="nom" name="nom" placeholder="Nom" min="0" class="p-5 border border-black"/>
+                    </p>
+                    <p class="mb-2">
+                        <input type="text" id="prenom" name="prenom" placeholder="Prénom" min="0" class="p-5 border border-black"/>
+                    </p>
+                    <p class="mb-2">
+                        <p class="font-serif">Selectionner un classe</p>
+                        <select id="adminSelectStudent" id="classe">
+                            {% for classe in classes %} 
+                                <option value={{classe.libelle}}>{{classe.libelle}}</option>
+                            {% endfor %}
+                        </select>
+                    </p>
+                    <p class="mb-2">
+                        <input type="hidden" name="_csrf_token" value="admin_editing_student">
+                    </p>
+                    <p>
+                        <button type="submit" class="bg-blue-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                            OK
+                        </button>
+                    </p>
+                </form>
+            </div>
+            <div class="modal-footer mt-4">
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="adminProfEdit" tabindex="-1" aria-labelledby="adminProfEditLabel">
+        <input type="text" id="controleVal" style="display:none;"/>
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="flex justify-between items-center mb-4 modal-header">
+                <h5 class="modal-title font-serif" id="adminProfEditLabel">Gérer les classes de : <span id="adminSelectedProf"></span></h5>
+                <button type="button" class="btn-close text-red-500 text-lg dismissModal" data-bs-dismiss="modal" aria-label="Close">
+                    X
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{path('admin_edit_professor')}}" method="POST" id = "adminEditProfForm">
+                    <p class="mb-2">
+                        <input type="text" id="profNom" name="profNom" placeholder="Nom" min="0" class="p-5 border border-black"/>
+                    </p>
+                    <p class="mb-2">
+                        <input type="text" id="profPrenom" name="profPrenom" placeholder="Prénom" min="0" class="p-5 border border-black"/>
+                    </p>
+                    <p class="mb-2">
+                        <p class="font-serif">Selectionner une ou plusieurs classes</p>
+                        <select id="adminSelectProfClass" style="width:25vw;" multiple name="profClasses[]">
+                            {% for classe in classes %} 
+                                <option value={{classe.libelle}} style="width:25vw;">{{classe.libelle}}</option>
+                            {% endfor %}
+                        </select>
+                    </p>
+                    <p class="mb-2">
+                        <input type="hidden" name="_csrf_token" value="admin_editing_professor">
+                    </p>
+                    <p>
+                        <button id="adminEditProfButton" class="bg-blue-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                            OK
+                        </button>
+                    </p>
+                </form>
+            </div>
+            <div class="modal-footer mt-4">
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!--Repors-->
+    <div class="modal fade" id="adminStuReportsModal" tabindex="-1" aria-labelledby="adminStudentReportsModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content" id="reports">
+            <div class="flex justify-between items-center mb-4 modal-header">
+                <h5 class="modal-title font-serif" id="adminProfEditLabel">Bulletin de notes : <span id="studDisplayedReport"></span></h5>
+                <button type="button" class="btn-close text-red-500 text-lg dismissModal" data-bs-dismiss="modal" aria-label="Close">
+                    X
+                </button>
+            </div>
+            <div class="modal-body">
+                <table id="adminStudReportsTab" class="table display striped mt-5">
+                    <thead>
+                        <tr>
+                            <td>Matière</td>
+                            <td>Moyenne contrôle</td>
+                            <td>Note final</td>
+                            <td>Moyenne</td>
+                            <td>Observations</td>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="5" class="border border-black-500 leading-loose">
+                                <textarea textarea class="w-full p-3" rows="4" placeholder="Observations générales"></textarea>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="modal-footer mt-4">
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+
+</div>
+{% endblock %}

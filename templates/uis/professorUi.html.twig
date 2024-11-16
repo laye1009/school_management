@@ -1,14 +1,16 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+
+
 <div class="text-center mt-3">
-    <select id="classeSelect" class="w-1/6 border border-dark p-2 select2">
+    <select id="classeSelect" class="w-1/6 border border-dark p-2 select2" placeholder="Sélectionner une classe">
         {% for classe in classes %}
             <option value="{{classe.id}}">{{classe.libelle}}</option>
         {% endfor %}
     </select>
 
-    <div class="flex justify-center h-screen">
+    <div class="flex justify-center h-screen mt-3">
         <table id="schoolDatatable" class="table display striped mt-5">
             <thead>
                 <tr>
@@ -34,15 +36,13 @@
     <div class="modal-dialog">
         <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title font-serif" id="schoolModalLabel">Gestion des notes de: <span id="displayedStudent"></span></h5>
+            <h5 class="modal-title font-serif" id="schoolModalLabel">Ajout de note pour: <span id="displayedStudent"></span></h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
             <p id="controleSelect" class="mb-2" style="display:none;">
                 <select id="controleTypes" class="w-100 border border-dark p-2 selectElement select2">
-                    <option value="c1">Controle 1</option>
-                    <option value="c2">Controle 2</option>
-                    <option value="final">Final</option>
+
                 </select>
             </p>
 
@@ -89,7 +89,7 @@
                     </table>
             </div>
             <div class="modal-footer mt-4">
-                <button type="button" id="ajoutNote" class="bg-blue-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded dismissModal" data-bs-dismiss="modal">
+                <button type="button" id="ajoutNote" class="bg-blue-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" data-bs-dismiss="modal">
                     <i class="fas fa-plus" title="ajouter une note"></i>
                 </button>
             </div>

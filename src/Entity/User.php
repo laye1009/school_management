@@ -10,6 +10,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\ORM\Mapping\InheritanceType;
 use Doctrine\ORM\Mapping\DiscriminatorColumn;
 use Doctrine\ORM\Mapping\DiscriminatorMap;
+use Symfony\Component\Validator\Constraint as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[Broadcast]
@@ -18,6 +20,7 @@ use Doctrine\ORM\Mapping\DiscriminatorMap;
 #[DiscriminatorMap(['user' => User::class, 'student' => Student::class, 
 'professor' => Professor::class, 'principal' => Principal::class
 ])]
+#[UniqueEntity(fields: ['email'], message: 'Cet email est déjà utilisé.')]
 
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -32,10 +35,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $prenom = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique:true)]
     private ?string $email = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $password = null;
 
     public function getPassword(): ?string {
