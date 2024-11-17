@@ -210,7 +210,7 @@ class DefaultController extends AbstractController {
 
     #[Route('/admin/edit/student', name:'admin_edit_student', methods:['POST'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function adminEditStudent(ObjectManager $manager, Request $request, StudentRepository $studentRepo) {
+    public function adminEditStudent(ObjectManager $manager, Request $request, StudentRepository $studentRepo, ClasseRepository $classeRepo) {
         $submittedToken = $request->request->get('_csrf_token');
         if ($submittedToken == 'admin_editing_student') {
             $student = $studentRepo->findOneBy([
@@ -218,8 +218,9 @@ class DefaultController extends AbstractController {
             ]);
             $student->setNom($request->request->get('nom'));
             $student->setPrenom($request->request->get('prenom'));
-            if (!is_null($request->request->get('classe'))) {
-                $student->setClasse($request->request->get('classe'));
+            if (!is_null($request->get('classe'))) {
+                $eClasse = $classeRepo->findOneBy(['libelle' => $request->get('classe')]);
+                $student->setClasse($eClasse);
             }
             $manager->persist($student);
             $manager->flush();

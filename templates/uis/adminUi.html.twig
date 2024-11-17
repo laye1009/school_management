@@ -157,8 +157,8 @@
                         <input type="text" id="prenom" name="prenom" placeholder="Prénom" min="0" class="p-5 border border-black"/>
                     </p>
                     <p class="mb-2">
-                        <p class="font-serif">Selectionner un classe</p>
-                        <select id="adminSelectStudent" id="classe">
+                        <p class="font-serif">Selectionner une classe</p>
+                        <select id="adminSelectStudent" id="classe" name="classe">
                             {% for classe in classes %} 
                                 <option value={{classe.libelle}}>{{classe.libelle}}</option>
                             {% endfor %}
