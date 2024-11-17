@@ -32,11 +32,11 @@ class Professor extends User
     }
 
     /**
-     * @return Collection<int, Classe>
+     * @return array<int, Classe>
      */
-    public function getClasses(): Collection
+    public function getClasses(): array
     {
-        return $this->classes;
+        return $this->classes->toArray();
     }
 
     public function addClass(Classe $class): static

@@ -5,6 +5,7 @@
         <title>{% block title %}Welcome!{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
         <script src="https://cdn.tailwindcss.com"></script>
+
         {% block stylesheets %}
         {% endblock %}
         {% if app.debug %}
@@ -15,20 +16,78 @@
             <script type="module" src="{{ asset('build/assets/app.js') }}"></script>
         {% endif %}
         <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
-
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.dataTables.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/pdfmake.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/vfs_fonts.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.html5.min.js"></script>
+   
         <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
         <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
 
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+        <!--<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>-->
+        
+        
+       
 
     </head>
     <body>
-        {% block body %}{% endblock %}
+        {%block header%}
+            <header class="mx-5 bg bg-gray-100 mt-3">
+                <div class="flex justify-between px-4">
+                    <p class="w-1/8">
+                        <img src="{{ asset('images/schoolLogoMin.png') }}" type="image/svg+xml" class="rounded-full border-4 border-white shadow-lg">
+                    </p>
+                    <p class="mt-5">
+                        {% if app.user is not null %}
+                            {% if 'ROLE_STUDENT' in app.user.roles %}
+                                <a href="{{path('student_ui')}}" class="font-serif underline">Mon tableau de bord</a>
+                            {% endif %}
+                            {% if 'ROLE_PROF' in app.user.roles %}
+                                <a href="{{path('professor_ui')}}" class="font-serif underline">Mon tableau de bord</a>
+                            {% endif %}
+                            {% if 'ROLE_ADMIN' in app.user.roles %}
+                                <a href="{{path('admin_ui')}}" class="font-serif underline">Mon tableau de bord</a>
+                            {% endif %}
+                        {% endif %}
+                    </p>
+                    <div class="flex justify-between items-center">
+                        {% if app.user %}
+                        <p>
+
+                            <a href="{{path('app_logout')}}" class="mr-5 underline text-blue-500">Deconnexion</a>
+                            <span class="text-teal-500 rounded p-3 ml-5">
+                                <a>
+                                    {{app.user.nom ~ " " ~ app.user.prenom ~ " "}}
+                                </a>
+                            </span>
+                        </p>
+                        {% else %}
+                            <p>
+                                <a href="{{path('app_login')}}" class="mr-5 underline text-blue-500">Connexion</a>
+                            </p>
+                        {% endif %}
+                    </div>
+
+                </div> 
+
+
+
+            </header>
+        {%endblock%}
+        {% block body %}
+        {% endblock %}
+
+        {% block javascripts %}
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
+        {% endblock %}
+
     </body>
 </html>
