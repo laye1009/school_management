@@ -24,16 +24,19 @@ class Classe
     #[ORM\ManyToMany(targetEntity: Matiere::class, inversedBy: 'classes')]
     private Collection $matieres;
 
+    #[ORM\ManyToOne(inversedBy: 'classeEnseigne')]
+    private ?Professor $professor = null;
+
     /**
-     * @var Collection<int, User>
+     * @var Collection<int, Student>
      */
-    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'classe')]
-    private Collection $users;
+    #[ORM\OneToMany(targetEntity: Student::class, mappedBy: 'classe')]
+    private Collection $students;
 
     public function __construct()
     {
         $this->matieres = new ArrayCollection();
-        $this->users = new ArrayCollection();
+        $this->students = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -77,30 +80,42 @@ class Classe
         return $this;
     }
 
-    /**
-     * @return Collection<int, User>
-     */
-    public function getUsers(): Collection
+    public function getProfessor(): ?Professor
     {
-        return $this->users;
+        return $this->professor;
     }
 
-    public function addUser(User $user): static
+    public function setProfessor(?Professor $professor): static
     {
-        if (!$this->users->contains($user)) {
-            $this->users->add($user);
-            $user->setClasse($this);
+        $this->professor = $professor;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Student>
+     */
+    public function getStudents(): Collection
+    {
+        return $this->students;
+    }
+
+    public function addStudent(Student $student): static
+    {
+        if (!$this->students->contains($student)) {
+            $this->students->add($student);
+            $student->setClasse($this);
         }
 
         return $this;
     }
 
-    public function removeUser(User $user): static
+    public function removeStudent(Student $student): static
     {
-        if ($this->users->removeElement($user)) {
+        if ($this->students->removeElement($student)) {
             // set the owning side to null (unless already changed)
-            if ($user->getClasse() === $this) {
-                $user->setClasse(null);
+            if ($student->getClasse() === $this) {
+                $student->setClasse(null);
             }
         }
 

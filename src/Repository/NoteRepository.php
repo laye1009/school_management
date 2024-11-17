@@ -15,6 +15,16 @@ class NoteRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Note::class);
     }
+    public function getNotesForMatiere($matiere, $student): array {
+        return $this->createQueryBuilder('n')
+            ->where('n.matiere = :matiereId')
+            //->andWhere('n.student = :studentId')
+            ->setParameter('matiereId', $matiere)
+            //->setParameter('studentId', $student)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
 
     //    /**
     //     * @return Note[] Returns an array of Note objects

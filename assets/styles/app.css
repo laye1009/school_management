@@ -32,3 +32,58 @@ button.bouton a {
     margin-top: -7vh;
     margin-left: 20vw;
 }
+
+.missingNote {
+    position: relative;
+    margin-top: 10vh;
+    font-size: 0.6em;
+    color: red;
+    width:50vw;
+}
+
+table tr th {
+    width:6vw;
+}
+
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Black background with opacity */
+}
+.modal-content {
+    background-color: white;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 5px;
+    width: 300px;
+    text-align: center;
+}
+
+.close-btn {
+    color: red;
+    float: right;
+    font-size: 24px;
+    cursor: pointer;
+}
+.modal-dialog {
+    position: relative;
+    top:-15vh;
+}
+.modal-content {
+    width: 30vw;
+}
+/*.modal-body table {
+    width:100%;
+}*/
+.fa-pencil {
+    margin-left:2vw;
+}
+.selectElement {
+    width: 14.5vw;
+    /*margin-left: 4vw;*/
+}

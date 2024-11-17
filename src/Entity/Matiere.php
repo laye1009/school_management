@@ -33,10 +33,17 @@ class Matiere
     #[ORM\OneToMany(targetEntity: Note::class, mappedBy: 'matiere')]
     private Collection $notes;
 
+    /**
+     * @var Collection<int, Professor>
+     */
+    #[ORM\OneToMany(targetEntity: Professor::class, mappedBy: 'matiereEnseigne')]
+    private Collection $professors;
+
     public function __construct()
     {
         $this->classes = new ArrayCollection();
         $this->notes = new ArrayCollection();
+        $this->professors = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -119,6 +126,36 @@ class Matiere
             // set the owning side to null (unless already changed)
             if ($note->getMatiere() === $this) {
                 $note->setMatiere(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Professor>
+     */
+    public function getProfessors(): Collection
+    {
+        return $this->professors;
+    }
+
+    public function addProfessor(Professor $professor): static
+    {
+        if (!$this->professors->contains($professor)) {
+            $this->professors->add($professor);
+            $professor->setMatiereEnseigne($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProfessor(Professor $professor): static
+    {
+        if ($this->professors->removeElement($professor)) {
+            // set the owning side to null (unless already changed)
+            if ($professor->getMatiereEnseigne() === $this) {
+                $professor->setMatiereEnseigne(null);
             }
         }
 

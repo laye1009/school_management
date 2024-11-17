@@ -26,7 +26,7 @@ class Note
     #[ORM\JoinColumn(nullable: false)]
     private ?User $student = null;
 
-    #[ORM\ManyToOne(inversedBy: 'notes')]
+    #[ORM\ManyToOne(inversedBy: 'matiere')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Matiere $matiere = null;
 

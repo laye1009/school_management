@@ -2,17 +2,23 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\UX\Turbo\Attribute\Broadcast;
 use Symfony\Component\Security\Core\User\UserInterface;
-
+use Doctrine\ORM\Mapping\InheritanceType;
+use Doctrine\ORM\Mapping\DiscriminatorColumn;
+use Doctrine\ORM\Mapping\DiscriminatorMap;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[Broadcast]
+#[InheritanceType('SINGLE_TABLE')]
+#[DiscriminatorColumn(name: 'discr', type: 'string')]
+#[DiscriminatorMap(['user' => User::class, 'student' => Student::class, 
+'professor' => Professor::class, 'principal' => Principal::class
+])]
+
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -46,21 +52,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     private ?string $identifiant = null;
-
-    #[ORM\ManyToOne(inversedBy: 'users')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Classe $classe = null;
-
-    /**
-     * @var Collection<int, Note>
-     */
-    #[ORM\OneToMany(targetEntity: Note::class, mappedBy: 'student', orphanRemoval: true)]
-    private Collection $notes;
-
-    public function __construct()
-    {
-        $this->notes = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
@@ -111,7 +102,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // guarantee every user at least has ROLE_USER
         $roles = $this->roles;
-        $roles[] = 'ROLE_STUDENT';
+        //$roles[] = 'ROLE_STUDENT';
 
         return array_unique($roles);
     }
@@ -135,48 +126,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIdentifiant(string $identifiant): static
     {
         $this->identifiant = $identifiant;
-
-        return $this;
-    }
-
-    public function getClasse(): ?Classe
-    {
-        return $this->classe;
-    }
-
-    public function setClasse(?Classe $classe): static
-    {
-        $this->classe = $classe;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Note>
-     */
-    public function getNotes(): Collection
-    {
-        return $this->notes;
-    }
-
-    public function addNote(Note $note): static
-    {
-        if (!$this->notes->contains($note)) {
-            $this->notes->add($note);
-            $note->setStudent($this);
-        }
-
-        return $this;
-    }
-
-    public function removeNote(Note $note): static
-    {
-        if ($this->notes->removeElement($note)) {
-            // set the owning side to null (unless already changed)
-            if ($note->getStudent() === $this) {
-                $note->setStudent(null);
-            }
-        }
 
         return $this;
     }
