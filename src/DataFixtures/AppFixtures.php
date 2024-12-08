@@ -51,8 +51,8 @@ class AppFixtures extends Fixture
         for ($i = 0; $i < 5; $i++) {
             $student = new Student();
             $password = $this->passwrdHasher->hashPassword($student, 'password');
-            $student->setNom($faker->firstname());
-            $student->setPrenom($faker->lastname());
+            $student->setNom($faker->firstName());
+            $student->setPrenom($faker->lastName());
             $student->setEmail($faker->email());
             $student->setPassword($password);
             $student->setClasse($faker->randomElement($classes));
@@ -67,8 +67,8 @@ class AppFixtures extends Fixture
         for($i=0; $i < 5; $i++) {
             $prof = new Professor();
             $password = $this->passwrdHasher->hashPassword($prof, 'password');
-            $prof->setNom($faker->firstname());
-            $prof->setPrenom($faker->lastname());
+            $prof->setNom($faker->firstName());
+            $prof->setPrenom($faker->lastName());
             $prof->setMatiereEnseigne($faker->randomElement($matieres));
             $prof->addClasseEnseigne($faker->randomElement($classes));
             $prof->setEmail($faker->email());

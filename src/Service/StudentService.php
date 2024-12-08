@@ -14,7 +14,7 @@ class StudentService {
     public function getMoyenneControles(array $notes) {
         $somme = 0;
         foreach($notes as $note) {
-            if (in_array($note->getType(), ['c1, c2'])) {
+            if (in_array($note->getType(), ['c1', 'c2'])) { // corrigé grâce au test erreur ['c1,c2']
                 $somme += $note->getNote();
             }
         }
@@ -22,11 +22,17 @@ class StudentService {
     }
 
     public function getFinalNote(array $notes) {
-        $finalNote = array_filter($notes, function($note) use ($notes) {
+        /*$finalNote = array_filter($notes, function($note) use ($notes) {
             return $note->getType() == 'final';
-        });
-
-        return count($finalNote) > 0 ? $finalNote[0]->getNote() > 0 : null;
+        }); 
+        return count($finalNote) > 0 ? $finalNote[0]->getNote() > 0 : null;*/ // nonesence qui génère une erreur du test testGetFianalNote
+        // ajouter une méthode pour tester qu'il y a qu'une seule note de type final
+        foreach($notes as $note) {
+            if ($note->getType() === 'final') {
+                return $note->getNote();
+            }
+        }
+        return null;
     }
 
     public function getMoyenneFinal(?int $moyenneControle, ?int $noteFinal) {
@@ -36,13 +42,13 @@ class StudentService {
         return "";
     }
 
-    public function getContoleTypeFromNotes($notes) {
+    public function getContoleTypeFromNotes($notes) { // not used
         return array_map(function($note) {
             return $note->getType();
         }, $notes);
     }
 
-    public function hasControleMark(string $controle, array $notes) {
+    public function hasControleMark(string $controle, array $notes) { // not used
         foreach($notes as $note) {
             $controlesToAdd[] = $note->getType();
             if (!in_array($controle, $note->getType())) {
