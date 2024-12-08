@@ -57,7 +57,9 @@ class DefaultController extends AbstractController {
     #[Route('/professor/ui', name: "professor_ui")]
     #[IsGranted('ROLE_PROF')]
     public function profUi() {
-        /**@var Professor $user */
+        /**
+         * @var Professor $user 
+         */
         $user = $this->getUser();
         $classes = $user->getClasses();
         //dump($classes);
@@ -67,7 +69,9 @@ class DefaultController extends AbstractController {
     #[Route('/student/ui', name: "student_ui")]
     #[IsGranted('ROLE_STUDENT')]
     public function studentUi(NoteRepository $noteRepo) {
-        /**@var Student $user */
+        /**
+         *@var Student $user 
+        */
         $user = $this->getUser();
         $classe = $user->getClasse();
         $matieres = $classe->getMatieres();
@@ -97,7 +101,9 @@ class DefaultController extends AbstractController {
         NoteRepository $noteRepo, MatiereRepository $matiereRepo
     )  {
         $classe = $request->request->get('classe');
-        /**@var Professor $professor */
+        /**
+         * @var Professor $professor 
+         */
         $professor = $this->getUser();
         $students = $studentRepo->findBy(['classe' => $classe]);
         $matiere = $matiereRepo->findOneBy(['libelle' => $professor->getMatiereEnseigne()->getLibelle()]);

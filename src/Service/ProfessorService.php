@@ -15,16 +15,17 @@ class ProfessorService {
                 unset($oldClass);
             }
         }*/
-        for ($i=0; $i < count($oldClasses); $i++) {
+        
+        for ($i=0; $i < count($oldClasses); $i++) { 
             if (!in_array($oldClasses[$i]->getLibelle(), array_values($newClasses))) {
-                $professor->removeClass($oldClasses[$i]);
-                unset($oldClasses[$i]);
                 
+                $professor->removeClass($oldClasses[$i]);
+                //unset($oldClasses[$i]); //problème détecté grâce au tests-> tuto
             }
 
         }
-
-        return $this->addNewClassesToOld($oldClasses, $newClasses, $professor, $classeRepo);
+        
+        return $this->addNewClassesToOld($oldClasses, $newClasses, $professor, $classeRepo); // pas besoin de passer $oldClasses en param
     }
 
     public function addNewClassesToOld(
@@ -39,10 +40,11 @@ class ProfessorService {
             if (!in_array($newClassLibelle, $oldClassesLibelles)) {
                 $newClass = $classeRepo->findOneBy(['libelle' => $newClassLibelle]);
                 $professor->addClass($newClass);
-                $filteredOldClasses[] = $newClass;
+                //$filteredOldClasses[] = $newClass;
             }
         }
-        return $this->updateProfessorClasses($filteredOldClasses, $professor);
+        //return $this->updateProfessorClasses($filteredOldClasses, $professor);
+        return $professor;
 
     }
 

@@ -21,7 +21,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 'professor' => Professor::class, 'principal' => Principal::class
 ])]
 #[UniqueEntity(fields: ['email'], message: 'Cet email est déjà utilisé.')]
-
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
