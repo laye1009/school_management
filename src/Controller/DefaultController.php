@@ -3,6 +3,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Classe;
 use Exception;
 use App\Entity\Note;
 use App\Entity\Student;
@@ -25,6 +26,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
+
 class DefaultController extends AbstractController {
 
     public function __construct(public ProfessorService $profService, 
@@ -35,12 +39,12 @@ class DefaultController extends AbstractController {
 
     }
     #[Route('/', name:'home_page')]
-    public function homePage()  {
+    public function homePage(): Response  {
         return $this->render('home.html.twig');
     }
 
     #[Route('user/ui', name:'redirect_to_user_ui')]
-    public function redirectToUserUi(){
+    public function redirectToUserUi(): Response {
         if(!$this->getUser()) {
             return $this->redirectToRoute("app_login");
         }
@@ -56,7 +60,7 @@ class DefaultController extends AbstractController {
 
     #[Route('/professor/ui', name: "professor_ui")]
     #[IsGranted('ROLE_PROF')]
-    public function profUi() {
+    public function profUi(): Response {
         /**
          * @var Professor $user 
          */
@@ -81,9 +85,11 @@ class DefaultController extends AbstractController {
 
     #[Route('/admin/ui', name: "admin_ui")]
     #[IsGranted('ROLE_ADMIN')]
-    public function adminUi(StudentRepository $studentRepo, ProfessorRepository $profRepo, ClasseRepository $classeRepo) {
+    public function adminUi(StudentRepository $studentRepo, 
+        ProfessorRepository $profRepo, 
+        ClasseRepository $classeRepo
+    ): Response {
         $user = $this->getUser();
-        //dump($classes);
         $eleves = $studentRepo->findAll();
         $professors = $profRepo->findAll();
         $classes = $classeRepo->findAll();
@@ -99,7 +105,10 @@ class DefaultController extends AbstractController {
     #[IsGranted('ROLE_PROF')]
     public function getClassStudentList(Request $request, StudentRepository $studentRepo, 
         NoteRepository $noteRepo, MatiereRepository $matiereRepo
-    )  {
+    ): JsonResponse  {
+        /**
+         * @var string $classe
+         */
         $classe = $request->request->get('classe');
         /**
          * @var Professor $professor 
@@ -126,7 +135,10 @@ class DefaultController extends AbstractController {
     }
     #[Route('/edit/note', name:'edit_note')]
     #[IsGranted('ROLE_PROF')]
-    public function confirmNoteEdition(Request $request, ObjectManager $manager, MatiereRepository $matRepo, StudentRepository $studentRepo) {
+    public function confirmNoteEdition(Request $request, 
+        ObjectManager $manager, MatiereRepository $matRepo, 
+        StudentRepository $studentRepo
+    ): JsonResponse {
         $studentId = $request->request->get('studentId');
         $newNote = $request->request->get('newNote');
         $matiereId = $request->get('matiere');
@@ -165,7 +177,7 @@ class DefaultController extends AbstractController {
 
     #[Route('/controle/a_ajouter', name:'controle_a_ajouter')]
     #[IsGranted('ROLE_PROF')]
-    public function ajouterNote(Request $request, StudentRepository $studentRepo) {
+    public function ajouterNote(Request $request, StudentRepository $studentRepo): JsonResponse {
         $studentId = $request->get('studentId');
 
         $student = $studentRepo->findOneBy(['id' => $studentId]);
@@ -185,7 +197,7 @@ class DefaultController extends AbstractController {
 
     #[Route('/student/notes/list', name:'student_notes_list')]
     #[IsGranted('ROLE_PROF')]
-    public function lsiteNoteStudent(Request $request, StudentRepository $studentRepo, NoteRepository $noteRepo) {
+    public function lsiteNoteStudent(Request $request, StudentRepository $studentRepo): JsonResponse {
         $studentId = $request->request->get('student');
         $matiereId = $request->request->get('matiere');
         $student = $studentRepo->findOneBy(['id' => $studentId]);
@@ -216,7 +228,10 @@ class DefaultController extends AbstractController {
 
     #[Route('/admin/edit/student', name:'admin_edit_student', methods:['POST'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function adminEditStudent(ObjectManager $manager, Request $request, StudentRepository $studentRepo, ClasseRepository $classeRepo) {
+    public function adminEditStudent(ObjectManager $manager, 
+        Request $request, StudentRepository $studentRepo, 
+        ClasseRepository $classeRepo
+    ): RedirectResponse {
         $submittedToken = $request->request->get('_csrf_token');
         if ($submittedToken == 'admin_editing_student') {
             $student = $studentRepo->findOneBy([
@@ -235,10 +250,10 @@ class DefaultController extends AbstractController {
     }
     #[Route('/admin/edit/professor', name:'admin_edit_professor', methods:['POST'])]
     public function adminEditProfessor(
-            ObjectManager $manager, 
-            Request $request, 
-            ProfessorRepository $profRepo, ClasseRepository $classeRepo
-        ) {
+        ObjectManager $manager, 
+        Request $request, 
+        ProfessorRepository $profRepo, ClasseRepository $classeRepo
+    ): RedirectResponse {
         $submittedToken = $request->request->get('_csrf_token');
         if ($submittedToken == 'admin_editing_professor') {
             $prof = $profRepo->findOneBy([
@@ -259,21 +274,20 @@ class DefaultController extends AbstractController {
             return $this->redirectToRoute('admin_ui');
         }
     }
+
     #[Route('/admin/delete/prof', name:'admin_delete_prof')]
-    //#[Security("request.isXmlHttpRequest()", message:"Accès interdit")]
-    public function deleteProf(Request $request, ProfessorRepository $profRepo, ObjectManager $manager) {
+    public function deleteProf(Request $request, ProfessorRepository $profRepo, ObjectManager $manager): JsonResponse {
         if (!$request->isXmlHttpRequest()) {
             throw $this->createAccessDeniedException('Accès impossible');
         }
         $profId = $request->get('profId');
-        $professor = $profRepo->findOneBy(['id' => $profId]);
 
         //$manager->remove($professor);
         //$manager->flush();
         return new JsonResponse(['data' => 'Suppression réussie!']);
     }
     #[Route('new/professor', name:'new_professor')]
-    public function newProfessor(Request $request, ObjectManager $manager) {
+    public function newProfessor(Request $request, ObjectManager $manager): Response {
         $form = $this->createForm(ProfessorType::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -293,7 +307,7 @@ class DefaultController extends AbstractController {
         ]);
     }
     #[Route('new/student', name:'new_student')]
-    public function newStudent(Request $request, ObjectManager $manager) {
+    public function newStudent(Request $request, ObjectManager $manager): Response {
         $form = $this->createForm(StudentType::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -311,7 +325,7 @@ class DefaultController extends AbstractController {
     }
 
     #[Route('/display/report', name:'display_reports')]
-    public function displayReport(Request $request, StudentRepository $studentRepo) {
+    public function displayReport(Request $request, StudentRepository $studentRepo): JsonResponse {
         $studentId = $request->get('studentId');
         $student = $studentRepo->findOneBy(['id' => $studentId]);
         $matieres = $student->getClasse()->getMatieres()->toArray();

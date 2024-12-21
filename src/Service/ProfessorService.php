@@ -1,10 +1,8 @@
 <?php
 namespace App\Service;
 
-use App\Entity\Classe;
 use App\Entity\Professor;
 use App\Repository\ClasseRepository;
-use App\Exception\ProfessorClasseUpdateException;
 
 class ProfessorService {
     public function filterOldClasses(array $oldClasses, array $newClasses, 
