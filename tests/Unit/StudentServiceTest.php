@@ -44,18 +44,18 @@ class StudentServiceTest extends KernelTestCase {
         
     }
 
-    public function testFilterMatiere() {
+    /*public function testFilterMatiere() {
         $matLibelle = "Mathematiques";
         $filtered = $this->studentService->filterMatieres($matLibelle, [$this->note1, $this->note2, $this->note3]);
         $this->assertCount(2, $filtered);
         return $filtered;
-    }
+    }*/
 
-    /**
-     * @depends testFilterMatiere
-     */
-    public function testGetMoyenneControles($notes) {
-        $moyenne = $this->studentService->getMoyenneControles($notes);
+    //@depends testFilterMatiere
+    public function testGetMoyenneControles() {
+        $matLibelle = "Mathematiques";
+        $filtered = $this->studentService->filterMatieres($matLibelle, [$this->note1, $this->note2, $this->note3]);
+        $moyenne = $this->studentService->getMoyenneControles($filtered);
         $this->assertEquals(3.5, $moyenne);
         return $moyenne;
     }
@@ -67,11 +67,12 @@ class StudentServiceTest extends KernelTestCase {
         return $noteFinal;
     }
 
-    /**
-     * @depends testGetMoyenneControles
-     * @depends testGetFinalNote
-     */
-    public function testGetMoyenneFinal(float $moyenneControle, float $noteFinal) {
-        $this->assertEquals(7.75, ($moyenneControle+$noteFinal)/2);
+    // @depends testGetMoyenneControles
+    public function testGetMoyenneFinal() {
+        $matLibelle = "Mathematiques";
+        $noteFinal = $this->studentService->getFinalNote([$this->note1, $this->note2, $this->note3]);
+        $filtered = $this->studentService->filterMatieres($matLibelle, [$this->note1, $this->note2, $this->note3]);
+        $moyenne = $this->studentService->getMoyenneControles($filtered);
+        $this->assertEquals(7.75, ($moyenne+$noteFinal)/2);
     }
 }

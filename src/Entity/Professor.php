@@ -39,7 +39,7 @@ class Professor extends User
         return $this->classes->toArray();
     }
 
-    public function addClass(Classe $class): static
+    public function addClass(?Classe $class): static
     {
         if (!$this->classes->contains($class)) {
             $this->classes->add($class);
@@ -49,7 +49,7 @@ class Professor extends User
         return $this;
     }
 
-    public function removeClass(Classe $class): static
+    public function removeClass(?Classe $class): static
     {
         if ($this->classes->removeElement($class)) {
             // set the owning side to null (unless already changed)
@@ -81,7 +81,7 @@ class Professor extends User
         return $this->classeEnseigne;
     }
 
-    public function addClasseEnseigne(Classe $classeEnseigne): static
+    public function addClasseEnseigne(?Classe $classeEnseigne): static
     {
         if (!$this->classeEnseigne->contains($classeEnseigne)) {
             $this->classeEnseigne->add($classeEnseigne);
@@ -91,7 +91,7 @@ class Professor extends User
         return $this;
     }
 
-    public function removeClasseEnseigne(Classe $classeEnseigne): static
+    public function removeClasseEnseigne(?Classe $classeEnseigne): static
     {
         if ($this->classeEnseigne->removeElement($classeEnseigne)) {
             // set the owning side to null (unless already changed)

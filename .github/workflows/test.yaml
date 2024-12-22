@@ -4,7 +4,9 @@ on:
   push:
     branches:
       - main
-
+env:
+  DB_USER: lail
+  DB_PASS: password
 
 jobs:
   test:
@@ -13,13 +15,12 @@ jobs:
       postgres:
         image: postgres:13
         env:
-          POSTGRES_USER: user
+          POSTGRES_USER: lail
           POSTGRES_PASSWORD: password
           POSTGRES_DB: school_management_test
         ports:
           - 5433:5432
-    env:
-      ENV: test
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -29,22 +30,29 @@ jobs:
         with:
           php-version: '8.2'
           extensions: mbstring, pdo, pdo_pgsql
-      - name: Install DBAL
-        run: composer require doctrine/dbal
-
+      #- name: Install DBAL
+      #  run: |
+      #    composer require doctrine/dbal
+      #    composer require symfony/orm-pack
+      #- name: Create database user
+      #  run: |
+      #    PGPASSWORD=postgres psql -h localhost -U postgres -c "CREATE USER ${{ env.DB_USER }} WITH PASSWORD '${{ env.DB_PASS }}';"
+      #    PGPASSWORD=postgres psql -h localhost -U postgres -c "ALTER USER ${{ env.DB_USER }} WITH CREATEDB;"
+          
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --no-suggest
 
       - name: Set database URL environment variable
         env:
-          DATABASE_URL: postgresql://postgres:@localhost:5432/school_management_test
+          DATABASE_URL: postgresql://lail:password@localhost:5433/school_management_test
         run: |
           echo "DATABASE_URL=$DATABASE_URL" >> $GITHUB_ENV
 
       - name: Set up database
         run: |
-          php bin/console doctrine:database:create --if-not-exists --env=test
-          php bin/console doctrine:migrations:migrate --no-interaction --env=test
+          php bin/console doctrine:schema:update --force
+          php bin/console doctrine:fixtures:load --no-interaction
 
+          
       - name: Run tests
         run: vendor/bin/phpunit --verbose
